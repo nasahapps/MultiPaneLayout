@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="pane_one" type="id"/>
+    <item name="pane_two" type="id"/>
+    <item name="pane_three" type="id"/>
+</resources>

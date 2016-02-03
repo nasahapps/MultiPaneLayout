@@ -59,7 +59,7 @@ public class MultiPaneLayout extends LinearLayout {
             a.recycle();
         }
 
-        if (mLayoutOrientation > 6) {
+        if (mLayoutOrientation > 4) {
             throw new IllegalArgumentException("Invalid layout orientation!");
         }
 
@@ -70,16 +70,95 @@ public class MultiPaneLayout extends LinearLayout {
         }
 
         switch (mLayoutOrientation) {
+            case ORIENTATION_HORIZONTAL_ONE_TO_TWO:
+                FrameLayout fl1 = createFrameLayout(1);
+                fl1.setId(R.id.pane_one);
+                addView(fl1);
+
+                FrameLayout fl2 = createFrameLayout(2);
+                fl2.setVisibility(GONE);
+                fl2.setId(R.id.pane_two);
+                addView(fl2);
+                break;
+            case ORIENTATION_HORIZONTAL_TWO_EVEN:
+            case ORIENTATION_VERTICAL_TWO_EVEN:
+                FrameLayout fl5 = createFrameLayout(1);
+                fl5.setId(R.id.pane_one);
+                addView(fl5);
+
+                FrameLayout fl6 = createFrameLayout(1);
+                fl6.setVisibility(GONE);
+                fl6.setId(R.id.pane_two);
+                addView(fl6);
+                break;
+            case ORIENTATION_HORIZONTAL_THREE_EVEN:
+                FrameLayout fl7 = createFrameLayout(1);
+                fl7.setId(R.id.pane_one);
+                addView(fl7);
+
+                FrameLayout fl8 = createFrameLayout(1);
+                fl8.setVisibility(GONE);
+                fl8.setId(R.id.pane_two);
+                addView(fl8);
+
+                FrameLayout fl9 = createFrameLayout(1);
+                fl9.setVisibility(GONE);
+                fl9.setId(R.id.pane_three);
+                addView(fl9);
+                break;
+            case ORIENTATION_RIGHT_T:
+                LinearLayout ll = new LinearLayout(getContext());
+                ll.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 2));
+                ll.setOrientation(VERTICAL);
+                ll.setId(R.id.inner_linear);
+                addView(ll);
+
+                FrameLayout fl10 = createFrameLayout(1);
+                fl10.setId(R.id.pane_one);
+                ll.addView(fl10);
+
+                FrameLayout fl11 = createFrameLayout(1);
+                fl11.setId(R.id.pane_two);
+                fl11.setVisibility(GONE);
+                ll.addView(fl11);
+
+                FrameLayout fl12 = createFrameLayout(1);
+                fl12.setId(R.id.pane_three);
+                fl12.setVisibility(GONE);
+                addView(fl12);
+                break;
+            case ORIENTATION_LEFT_T:
+                FrameLayout fl15 = createFrameLayout(1);
+                fl15.setId(R.id.pane_one);
+                addView(fl15);
+
+                LinearLayout ll2 = new LinearLayout(getContext());
+                ll2.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 2));
+                ll2.setOrientation(VERTICAL);
+                ll2.setId(R.id.inner_linear);
+                ll2.setVisibility(GONE);
+                addView(ll2);
+
+                FrameLayout fl13 = createFrameLayout(1);
+                fl13.setId(R.id.pane_two);
+                fl13.setVisibility(GONE);
+                ll2.addView(fl13);
+
+                FrameLayout fl14 = createFrameLayout(1);
+                fl14.setId(R.id.pane_three);
+                fl14.setVisibility(GONE);
+                ll2.addView(fl14);
+                break;
             case ORIENTATION_HORIZONTAL_TWO_TO_ONE:
             default:
-                FrameLayout one = createFrameLayout(2);
-                one.setId(R.id.pane_one);
-                addView(one);
+                FrameLayout fl3 = createFrameLayout(2);
+                fl3.setId(R.id.pane_one);
+                addView(fl3);
 
-                FrameLayout two = createFrameLayout(1);
-                two.setVisibility(GONE);
-                two.setId(R.id.pane_two);
-                addView(two);
+                FrameLayout fl4 = createFrameLayout(1);
+                fl4.setVisibility(GONE);
+                fl4.setId(R.id.pane_two);
+                addView(fl4);
                 break;
         }
     }
@@ -101,11 +180,17 @@ public class MultiPaneLayout extends LinearLayout {
 
         View pane;
         int paneId = getPaneIdForIndex(paneIndex);
-        pane = findViewById(paneId);
+        pane = getPaneById(paneId);
 
         if (pane != null) {
             // Show the pane if it wasn't already visible
             if (pane.getVisibility() == GONE) {
+                // If the orientation is LEFT_T, make sure the LinearLayout container
+                // is visible first
+                if (mLayoutOrientation == ORIENTATION_LEFT_T) {
+                    findViewById(R.id.inner_linear).setVisibility(VISIBLE);
+                }
+
                 pane.setVisibility(VISIBLE);
             }
 
@@ -134,7 +219,7 @@ public class MultiPaneLayout extends LinearLayout {
 
         View pane;
         int paneId = getPaneIdForIndex(paneIndex);
-        pane = findViewById(paneId);
+        pane = getPaneById(paneId);
 
         if (pane != null) {
             // Remove the fragment first, if it exists
@@ -147,6 +232,14 @@ public class MultiPaneLayout extends LinearLayout {
 
             pane.setVisibility(GONE);
 
+            // If in a LEFT_T orientation, hide the LinearLayout container
+            // if both its children are hidden
+            if (mLayoutOrientation == ORIENTATION_LEFT_T
+                    && getPaneById(R.id.pane_two).getVisibility() == GONE
+                    && getPaneById(R.id.pane_three).getVisibility() == GONE) {
+                findViewById(R.id.inner_linear).setVisibility(GONE);
+            }
+
             if (paneIndex == 1) {
                 mPaneTwoExpanded = false;
             } else if (paneIndex == 2) {
@@ -157,7 +250,7 @@ public class MultiPaneLayout extends LinearLayout {
 
     public boolean isPaneExpanded(int paneIndex) {
         int id = getPaneIdForIndex(paneIndex);
-        View pane = findViewById(id);
+        View pane = getPaneById(id);
         return pane != null && pane.getVisibility() == VISIBLE;
     }
 
@@ -174,6 +267,15 @@ public class MultiPaneLayout extends LinearLayout {
             return R.id.pane_two;
         } else {
             return R.id.pane_three;
+        }
+    }
+
+    private View getPaneById(int id) {
+        if ((mLayoutOrientation == ORIENTATION_RIGHT_T && (id == R.id.pane_one || id == R.id.pane_two))
+                || (mLayoutOrientation == ORIENTATION_LEFT_T && (id == R.id.pane_two || id == R.id.pane_three))) {
+            return findViewById(R.id.inner_linear).findViewById(id);
+        } else {
+            return findViewById(id);
         }
     }
 

@@ -2,63 +2,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              android:background="@color/colorPrimary"
               android:gravity="center"
-              android:orientation="vertical">
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/twoToOneHorizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="2:1 H"/>
-
-        <Button
-            android:id="@+id/oneToTwoHorizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="1:2 H"/>
-
-        <Button
-            android:id="@+id/oneToOneHorizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="1:1 H"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/oneToOneToOneHorizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="1:1:1 H"/>
-
-        <Button
-            android:id="@+id/oneToOneVertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="1:1 V"/>
-
-        <Button
-            android:id="@+id/twoVerticalToOneHorizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="(1:1 V) 2:1 H"/>
-
-    </LinearLayout>
+              android:orientation="horizontal">
 
     <Button
-        android:id="@+id/oneHorizontalToTwoVertical"
+        android:id="@+id/togglePaneTwo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="1:2 H (1:1 V)"/>
+        android:text="Pane Two"/>
+
+    <Button
+        android:id="@+id/togglePaneThree"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pane Three"/>
 
 </LinearLayout>

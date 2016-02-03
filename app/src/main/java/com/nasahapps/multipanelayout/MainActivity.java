@@ -27,11 +27,11 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    public void togglePane() {
-        if (mMultiPaneLayout.isPaneExpanded(1)) {
-            mMultiPaneLayout.hideFragmentInPane(1);
+    public void togglePane(int index) {
+        if (mMultiPaneLayout.isPaneExpanded(index)) {
+            mMultiPaneLayout.hideFragmentInPane(index);
         } else {
-            mMultiPaneLayout.showFragmentInPane(1, new ListFragment());
+            mMultiPaneLayout.showFragmentInPane(index, index == 1 ? new ListFragment() : new GridFragment());
         }
     }
 }

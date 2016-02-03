@@ -14,38 +14,13 @@ public class ControlFragment extends BaseFragment {
         return R.layout.fragment_control;
     }
 
-    @OnClick(R.id.twoToOneHorizontal)
-    public void showTwoToOneHorizontal() {
-        ((MainActivity) getActivity()).togglePane();
+    @OnClick(R.id.togglePaneTwo)
+    public void togglePaneTwo() {
+        ((MainActivity) getActivity()).togglePane(1);
     }
 
-    @OnClick(R.id.oneToTwoHorizontal)
-    public void showOneToTwoHorizontal() {
-
-    }
-
-    @OnClick(R.id.oneToOneHorizontal)
-    public void showOneToOneHorizontal() {
-
-    }
-
-    @OnClick(R.id.oneToOneToOneHorizontal)
-    public void showThreeSideBySideHorizontal() {
-
-    }
-
-    @OnClick(R.id.oneToOneVertical)
-    public void showOneToOneVertical() {
-
-    }
-
-    @OnClick(R.id.twoVerticalToOneHorizontal)
-    public void showTwoEvenVerticalNextToOneHorizontal() {
-
-    }
-
-    @OnClick(R.id.oneHorizontalToTwoVertical)
-    public void showOneHorizontalNextToTwoEvenVertical() {
-
+    @OnClick(R.id.togglePaneThree)
+    public void togglePaneThree() {
+        ((MainActivity) getActivity()).togglePane(2);
     }
 }

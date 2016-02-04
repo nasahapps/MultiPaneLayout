@@ -1,11 +1,18 @@
 package com.nasahapps.multipanelayout;
 
+import android.animation.LayoutTransition;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.transition.AutoTransition;
+import android.transition.Scene;
+import android.transition.Transition;
+import android.transition.TransitionManager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +35,11 @@ public class MultiPaneLayout extends LinearLayout {
     private int mLayoutOrientation;
     private FragmentManager mFragmentManager;
     private boolean mPaneTwoExpanded, mPaneThreeExpanded;
+    /**
+     * Only used on API 19+ for use of the {@link android.transition.Transition} APIs
+     */
+    private boolean mTransitionsEnabled;
+    private Transition mTransition;
 
     public MultiPaneLayout(Context context, FragmentManager fm) {
         super(context);
@@ -55,9 +67,12 @@ public class MultiPaneLayout extends LinearLayout {
             TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.MultiPaneLayout, 0, 0);
 
             mLayoutOrientation = a.getInteger(R.styleable.MultiPaneLayout_orientation, ORIENTATION_HORIZONTAL_TWO_TO_ONE);
+            mTransitionsEnabled = a.getBoolean(R.styleable.MultiPaneLayout_animated, true);
 
             a.recycle();
         }
+
+        setAnimationsEnabled(mTransitionsEnabled);
 
         if (mLayoutOrientation > 4) {
             throw new IllegalArgumentException("Invalid layout orientation!");
@@ -183,6 +198,10 @@ public class MultiPaneLayout extends LinearLayout {
         pane = getPaneById(paneId);
 
         if (pane != null) {
+            if (mTransitionsEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                TransitionManager.beginDelayedTransition(this, mTransition);
+            }
+
             // Show the pane if it wasn't already visible
             if (pane.getVisibility() == GONE) {
                 // If the orientation is LEFT_T, make sure the LinearLayout container
@@ -222,6 +241,10 @@ public class MultiPaneLayout extends LinearLayout {
         pane = getPaneById(paneId);
 
         if (pane != null) {
+            if (mTransitionsEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                TransitionManager.beginDelayedTransition(this, mTransition);
+            }
+
             // Remove the fragment first, if it exists
             Fragment fragment = mFragmentManager.findFragmentById(paneId);
             if (fragment != null) {
@@ -277,6 +300,22 @@ public class MultiPaneLayout extends LinearLayout {
         } else {
             return findViewById(id);
         }
+    }
+
+    public void setAnimationsEnabled(boolean enabled) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            mTransitionsEnabled = enabled;
+            if (mTransition == null) {
+                mTransition = new AutoTransition();
+            }
+        } else {
+            setLayoutTransition(enabled ? new LayoutTransition() : null);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    public void setTransition(Transition transition) {
+        mTransition = transition;
     }
 
     @Override
@@ -370,6 +409,30 @@ public class MultiPaneLayout extends LinearLayout {
             dest.writeInt(this.mLayoutOrientation);
             dest.writeByte(mPaneTwoExpanded ? (byte) 1 : (byte) 0);
             dest.writeByte(mPaneThreeExpanded ? (byte) 1 : (byte) 0);
+        }
+    }
+
+    public static abstract class AnimationHelperImpl {
+        public abstract void setAnimationsEnabled(boolean enabled);
+
+        public abstract void setupAnimations();
+    }
+
+    public static class KitKatAnimationHelpImpl extends AnimationHelperImpl {
+
+        Scene paneTwoScene, paneThreeScene;
+
+        public KitKatAnimationHelpImpl() {
+        }
+
+        @Override
+        public void setAnimationsEnabled(boolean enabled) {
+
+        }
+
+        @Override
+        public void setupAnimations() {
+
         }
     }
 }

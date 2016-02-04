@@ -10,5 +10,6 @@
             <enum name="rightT" value="5"/>
             <enum name="leftT" value="6"/>
         </attr>
+        <attr name="animated" format="boolean"/>
     </declare-styleable>
 </resources>
